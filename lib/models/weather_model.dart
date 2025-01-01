@@ -1,51 +1,53 @@
 class WeatherModel {
   final String cityName;
   final String description;
-  final double temperature;
-  final int humidity;
-  final double precipitation;
-  final DateTime date;
-  final List<Forecast> forecasts;
+  final num temperature;
+  final num humidity;
+  final String icon;
+  final List<Forecast> dailyForecasts;
 
   WeatherModel({
     required this.cityName,
     required this.description,
     required this.temperature,
     required this.humidity,
-    required this.precipitation,
-    required this.date,
-    required this.forecasts,
+    required this.icon,
+    required this.dailyForecasts,
   });
 
   factory WeatherModel.fromJson(Map<String, dynamic> json) {
     return WeatherModel(
-      cityName: json['name'],
+      cityName: '${json['name']}, ${json['sys']['country']}',
       description: json['weather'][0]['description'],
-      temperature: json['main']['temp'],
+      temperature: json['main']['temp'] ,
       humidity: json['main']['humidity'],
-      precipitation: json['rain']?['1h'] ?? 0.0,
-      date: DateTime.fromMillisecondsSinceEpoch(json['dt'] * 1000),
-      forecasts: (json['daily'] as List).map((f) => Forecast.fromJson(f)).toList(),
+      icon: json['weather'][0]['icon'],
+      dailyForecasts: (json['daily'] as List)
+          .map((daily) => Forecast.fromJson(daily))
+          .toList(),
     );
   }
 }
 
 class Forecast {
   final DateTime date;
+  final num temperature;
   final String description;
-  final double temperature;
+  final String icon;
 
   Forecast({
     required this.date,
-    required this.description,
     required this.temperature,
+    required this.description,
+    required this.icon,
   });
 
   factory Forecast.fromJson(Map<String, dynamic> json) {
     return Forecast(
       date: DateTime.fromMillisecondsSinceEpoch(json['dt'] * 1000),
+      temperature: json['main']['temp'],
       description: json['weather'][0]['description'],
-      temperature: json['temp']['day'],
+      icon: json['weather'][0]['icon'],
     );
   }
 }
